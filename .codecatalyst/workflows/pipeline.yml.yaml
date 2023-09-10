@@ -1,0 +1,35 @@
+Name: pipeline.yml
+SchemaVersion: "1.0"
+
+Triggers:
+  - Type: Push
+    Branches:
+      - main
+
+Actions:
+  # Step 1: Checkout the latest code
+  - Name: Checkout Code
+    ActionTypeId:
+      Category: Source
+      Owner: ThirdParty
+      Version: "1"
+      Provider: GitHub
+    Configuration:
+      Owner: najamsmart
+      Repo: portfolionode
+      Branch: main
+      OAuthToken: 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
+    OutputArtifacts:
+      - Name: SourceOutput
+
+  # Step 2: Build Docker Image & Push to ECR
+  - Name: Build and Push Docker Image
+    ActionTypeId:
+      Category: Build
+      Owner: AWS
+      Version: "1"
+      Provider: CodeBuild
+    Configuration:
+      ProjectName: portfolionode
+    InputArtifacts:
+      - Name: SourceOutput
